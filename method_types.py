@@ -19,11 +19,18 @@ for method in method_types:
     response_put = requests.put("https://playground.learnqa.ru/ajax/api/compare_query_type", data={"method": method})
     response_delete = requests.delete("https://playground.learnqa.ru/ajax/api/compare_query_type", data={"method": method})
 
-    if method != "GET" and response_get.text == '{"success":"!"}':
+    if (method != "GET" and response_get.text == '{"success":"!"}') or \
+            (method == "GET" and response_get.text == 'Wrong method provided'):
         print(f"method=GET, parameter={method}: {response_get.text}")
-    if method != "POST" and response_post.text == '{"success":"!"}':
+
+    if (method != "POST" and response_post.text == '{"success":"!"}') or \
+            (method == "POST" and response_post.text == 'Wrong method provided'):
         print(f"method=POST, parameter={method}: {response_post.text}")
-    if method != "PUT" and response_put.text == '{"success":"!"}':
+
+    if (method != "PUT" and response_put.text == '{"success":"!"}') or \
+            (method == "PUT" and response_put.text == 'Wrong method provided'):
         print(f"method=PUT, parameter={method}: {response_put.text}")
-    if method != "DELETE" and response_delete.text == '{"success":"!"}':
+
+    if (method != "DELETE" and response_delete.text == '{"success":"!"}') or \
+            (method == "DELETE" and response_delete.text == 'Wrong method provided'):
         print(f"method=DELETE, parameter={method}: {response_delete.text}")  # method=DELETE, parameter=GET: {"success":"!"}
