@@ -1,5 +1,6 @@
 from requests import Response
 from json.decoder import JSONDecodeError
+from datetime import datetime
 
 
 class BaseCase:
@@ -23,3 +24,18 @@ class BaseCase:
         assert field_name in json_dict, f"Response JSON doesn't have the key '{field_name}'"
 
         return json_dict[field_name]
+
+    def get_create_user_data(self, email=None):
+        if email is None:
+            email_base_part = "test"
+            email_random_part = datetime.now().strftime("%d%m%Y%H%M%S")
+            email_domain = "example.com"
+            email = f"{email_base_part}{email_random_part}@{email_domain}"
+
+        return {
+            "username": "test",
+            "firstName": "test",
+            "lastName": "test",
+            "email": email,
+            "password": "test",
+        }
