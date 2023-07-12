@@ -6,6 +6,8 @@ from helpers.assertions import Assertions
 
 
 class TestUserAuth(BaseCase):
+    url_auth_user = "https://playground.learnqa.ru/api/user/auth"
+
     conditions = [
         ("no_cookie"),
         ("no_header"),
@@ -13,49 +15,46 @@ class TestUserAuth(BaseCase):
     ]
 
     def setup_method(self):
-        data = {
-            "email": "vinkotov@example.com",
-            "password": "1234"
-        }
-        response1 = requests.post("https://playground.learnqa.ru/api/user/login", data=data)
+        self.login(email="vinkotov@example.com", password="1234")
 
-        self.auth_cookie_value = self.get_cookie(response=response1, cookie_name="auth_sid")
-        self.token_value = self.get_header(response=response1, header_name="x-csrf-token")
-        self.user_id_from_auth = self.get_json_value(response=response1, field_name="user_id")
-
-    def test_user_auth(self):
-        response2 = requests.get(
-            url="https://playground.learnqa.ru/api/user/auth",
+    def auth_user(self):
+        response_auth = requests.get(
+            url=self.url_auth_user,
             cookies={"auth_sid": self.auth_cookie_value},
             headers={"x-csrf-token": self.token_value}
         )
 
+        return response_auth
+
+    def test_user_auth(self):
+        response_auth = self.auth_user()
+
         Assertions.get_json_value_by_name(
-            response=response2,
+            response=response_auth,
             name="user_id",
-            expected_value=self.user_id_from_auth,
+            expected_value=self.user_id,
             error_message="User id from auth API isn't equal to user id from check API"
         )
 
     @pytest.mark.parametrize("condition", conditions)
     def test_negative_auth(self, condition):
         if condition == "no_cookie":
-            response2 = requests.get(
-                url="https://playground.learnqa.ru/api/user/auth",
+            response_auth = requests.get(
+                url=self.url_auth_user,
                 headers={"x-csrf-token": self.token_value}
             )
         elif condition == "no_header":
-            response2 = requests.get(
-                url="https://playground.learnqa.ru/api/user/auth",
+            response_auth = requests.get(
+                url=self.url_auth_user,
                 cookies={"auth_sid": self.auth_cookie_value}
             )
         else:
-            response2 = requests.get(
-                url="https://playground.learnqa.ru/api/user/auth"
+            response_auth = requests.get(
+                url=self.url_auth_user
             )
 
         Assertions.get_json_value_by_name(
-            response=response2,
+            response=response_auth,
             name="user_id",
             expected_value=0,
             error_message=f"User is authorized with condition {condition}"

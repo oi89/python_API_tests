@@ -18,41 +18,46 @@ class TestUserCreate(BaseCase):
         "password"
     ]
 
-    def test_create_user_successfully(self):
-        response = requests.post(url=self.url_create_user, data=self.get_create_user_data())
+    def create_user(self, data):
+        response_create = requests.post(url=self.url_create_user, data=data)
 
-        Assertions.assert_status_code(response=response, expected_status_code=200)
-        Assertions.assert_json_has_key(response=response, name="id")
+        return response_create
+
+    def test_create_user_successfully(self):
+        response_create = self.create_user(data=self.get_create_user_data())
+
+        Assertions.assert_status_code(response=response_create, expected_status_code=200)
+        Assertions.assert_json_has_key(response=response_create, name="id")
 
     def test_create_user_with_existing_email(self):
         email = "vinkotov@example.com"
         data = self.get_create_user_data(email=email)
 
-        response = requests.post(url=self.url_create_user, data=data)
+        response_create = self.create_user(data=data)
 
-        Assertions.assert_status_code(response=response, expected_status_code=400)
-        assert response.content.decode("utf-8") == f"Users with email '{email}' already exists", \
-            f"Unexpected response content {response.content}"
+        Assertions.assert_status_code(response=response_create, expected_status_code=400)
+        assert response_create.content.decode("utf-8") == f"Users with email '{email}' already exists", \
+            f"Unexpected response content {response_create.content}"
 
     def test_create_user_with_incorrect_email(self):
         data = self.get_create_user_data()
         data["email"] = data["email"].replace("@", "")  # email without @
 
-        response = requests.post(url=self.url_create_user, data=data)
+        response_create = self.create_user(data=data)
 
-        Assertions.assert_status_code(response=response, expected_status_code=400)
-        Assertions.assert_response_text(response=response, expected_text="Invalid email format")
+        Assertions.assert_status_code(response=response_create, expected_status_code=400)
+        Assertions.assert_response_text(response=response_create, expected_text="Invalid email format")
 
     @pytest.mark.parametrize("condition", conditions)
     def test_create_user_without_field(self, condition):
         data = self.get_create_user_data()
         del data[condition]  # delete field from json
 
-        response = requests.post(url=self.url_create_user, data=data)
+        response_create = self.create_user(data=data)
 
-        Assertions.assert_status_code(response=response, expected_status_code=400)
+        Assertions.assert_status_code(response=response_create, expected_status_code=400)
         Assertions.assert_response_text(
-            response=response,
+            response=response_create,
             expected_text=f"The following required params are missed: {condition}"
         )
 
@@ -61,10 +66,13 @@ class TestUserCreate(BaseCase):
         data = self.get_create_user_data()
         data["username"] = username
 
-        response = requests.post(url=self.url_create_user, data=data)
+        response_create = self.create_user(data=data)
 
-        Assertions.assert_status_code(response=response, expected_status_code=400)
-        Assertions.assert_response_text(response=response, expected_text="The value of 'username' field is too short")
+        Assertions.assert_status_code(response=response_create, expected_status_code=400)
+        Assertions.assert_response_text(
+            response=response_create,
+            expected_text="The value of 'username' field is too short"
+        )
 
     def test_create_user_with_long_username(self):
         str_length = 251
@@ -72,7 +80,10 @@ class TestUserCreate(BaseCase):
         data = self.get_create_user_data()
         data["username"] = username
 
-        response = requests.post(url=self.url_create_user, data=data)
+        response_create = self.create_user(data=data)
 
-        Assertions.assert_status_code(response=response, expected_status_code=400)
-        Assertions.assert_response_text(response=response, expected_text="The value of 'username' field is too long")
+        Assertions.assert_status_code(response=response_create, expected_status_code=400)
+        Assertions.assert_response_text(
+            response=response_create,
+            expected_text="The value of 'username' field is too long"
+        )
