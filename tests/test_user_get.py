@@ -1,13 +1,12 @@
-import requests
-
 from helpers.base_case import BaseCase
 from helpers.assertions import Assertions
+from helpers.my_requests import MyRequests
 
 
 class TestUserGet(BaseCase):
 
     def test_get_details_by_not_authorized_user(self):
-        response_get = requests.get("https://playground.learnqa.ru/api/user/2")
+        response_get = MyRequests.get(uri="/user/2")
 
         Assertions.assert_status_code(response=response_get, expected_status_code=200)
         Assertions.assert_json_has_key(response=response_get, name="username")

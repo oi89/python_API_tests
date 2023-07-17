@@ -1,7 +1,8 @@
-import requests
 from requests import Response
 from json.decoder import JSONDecodeError
 from datetime import datetime
+
+from helpers.my_requests import MyRequests
 
 
 class BaseCase:
@@ -46,7 +47,7 @@ class BaseCase:
             "email": email,
             "password": password
         }
-        response_login = requests.post("https://playground.learnqa.ru/api/user/login", data=login_data)
+        response_login = MyRequests.post(uri="/user/login", data=login_data)
 
         self.auth_cookie_value = self.get_cookie(response=response_login, cookie_name="auth_sid")
         self.token_value = self.get_header(response=response_login, header_name="x-csrf-token")
@@ -55,8 +56,8 @@ class BaseCase:
         return response_login
 
     def get_user_info(self, user_id):
-        response_get_info = requests.get(
-            f"https://playground.learnqa.ru/api/user/{user_id}",
+        response_get_info = MyRequests.get(
+            uri=f"/user/{user_id}",
             cookies={"auth_sid": self.auth_cookie_value},
             headers={"x-csrf-token": self.token_value}
         )

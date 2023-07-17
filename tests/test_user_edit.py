@@ -1,20 +1,19 @@
-import requests
-
 from helpers.assertions import Assertions
 from helpers.base_case import BaseCase
+from helpers.my_requests import MyRequests
 
 
 class TestUserEdit(BaseCase):
 
     def create_new_user(self):
         self.create_data = self.get_create_user_data()
-        response_create = requests.post(url="https://playground.learnqa.ru/api/user/", data=self.create_data)
+        response_create = MyRequests.post(uri="/user/", data=self.create_data)
 
         return response_create
 
     def edit_user(self, user_id, data):
-        response_edit = requests.put(
-            f"https://playground.learnqa.ru/api/user/{user_id}",
+        response_edit = MyRequests.put(
+            uri=f"/user/{user_id}",
             cookies={"auth_sid": self.auth_cookie_value},
             headers={"x-csrf-token": self.token_value},
             data=data
@@ -56,8 +55,8 @@ class TestUserEdit(BaseCase):
 
         # Edit user without authorization
         new_firstname = "new_test"
-        response_edit = requests.put(
-            f"https://playground.learnqa.ru/api/user/{user_id}",
+        response_edit = MyRequests.put(
+            uri=f"/user/{user_id}",
             data={"firstName": new_firstname}
         )
 

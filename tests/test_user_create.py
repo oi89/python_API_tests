@@ -1,14 +1,14 @@
 import random
 import string
 import pytest
-import requests
 
 from helpers.assertions import Assertions
 from helpers.base_case import BaseCase
+from helpers.my_requests import MyRequests
 
 
 class TestUserCreate(BaseCase):
-    url_create_user = "https://playground.learnqa.ru/api/user/"
+    uri_create_user = "/user/"
 
     conditions = [
         "username",
@@ -19,7 +19,7 @@ class TestUserCreate(BaseCase):
     ]
 
     def create_user(self, data):
-        response_create = requests.post(url=self.url_create_user, data=data)
+        response_create = MyRequests.post(uri=self.uri_create_user, data=data)
 
         return response_create
 
