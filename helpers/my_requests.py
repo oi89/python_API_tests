@@ -1,4 +1,5 @@
 import requests
+import allure
 
 from helpers.logger import Logger
 
@@ -7,19 +8,23 @@ class MyRequests:
 
     @staticmethod
     def get(uri: str, data: dict = None, cookies: dict = None, headers: dict = None):
-        return MyRequests._send(uri=uri, data=data, cookies=cookies, headers=headers, method="GET")
+        with allure.step(f"GET request to URL {uri}"):
+            return MyRequests._send(uri=uri, data=data, cookies=cookies, headers=headers, method="GET")
 
     @staticmethod
     def post(uri: str, data: dict = None, cookies: dict = None, headers: dict = None):
-        return MyRequests._send(uri=uri, data=data, cookies=cookies, headers=headers, method="POST")
+        with allure.step(f"POST request to URL {uri}"):
+            return MyRequests._send(uri=uri, data=data, cookies=cookies, headers=headers, method="POST")
 
     @staticmethod
     def put(uri: str, data: dict = None, cookies: dict = None, headers: dict = None):
-        return MyRequests._send(uri=uri, data=data, cookies=cookies, headers=headers, method="PUT")
+        with allure.step(f"PUT request to URL {uri}"):
+            return MyRequests._send(uri=uri, data=data, cookies=cookies, headers=headers, method="PUT")
 
     @staticmethod
     def delete(uri: str, data: dict = None, cookies: dict = None, headers: dict = None):
-        return MyRequests._send(uri=uri, data=data, cookies=cookies, headers=headers, method="DELETE")
+        with allure.step(f"DELETE request to URL {uri}"):
+            return MyRequests._send(uri=uri, data=data, cookies=cookies, headers=headers, method="DELETE")
 
     @staticmethod
     def _send(uri: str, data: dict, cookies: dict, headers: dict, method: str):

@@ -166,3 +166,6 @@ cython_debug/
 /.idea/vcs.xml
 
 logs/
+
+allure-results/
+allure-report/

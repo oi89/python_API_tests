@@ -1,3 +1,4 @@
+import allure
 from requests import Response
 from json.decoder import JSONDecodeError
 from datetime import datetime
@@ -42,6 +43,7 @@ class BaseCase:
             "password": "test",
         }
 
+    @allure.step("Login a user with email = '{email}'")
     def login(self, email, password):
         login_data = {
             "email": email,
@@ -55,6 +57,7 @@ class BaseCase:
 
         return response_login
 
+    @allure.step("Get user info by id '{user_id}'")
     def get_user_info(self, user_id):
         response_get_info = MyRequests.get(
             uri=f"/user/{user_id}",
