@@ -2,6 +2,7 @@ import requests
 import allure
 
 from helpers.logger import Logger
+from environment import ENV_OBJECT
 
 
 class MyRequests:
@@ -28,7 +29,7 @@ class MyRequests:
 
     @staticmethod
     def _send(uri: str, data: dict, cookies: dict, headers: dict, method: str):
-        url = f"https://playground.learnqa.ru/api{uri}"
+        url = f"{ENV_OBJECT.get_base_url()}{uri}"
 
         if data is None:
             data = {}
